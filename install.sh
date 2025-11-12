@@ -5,43 +5,42 @@
 # الهدف: تثبيت واجهة Pegasus Frontend لإدارة الألعاب والمحاكيات
 # =======================================================
 
-# 1. تثبيت وتحديث الأدوات الأساسية
-echo "Starting installation..."
-echo "1/5: Updating Termux and installing dependencies (wget, git, termux-api)..."
-pkg update -y
-pkg install wget git termux-api -y
+echo "Starting Pegasus Termux Setup..."
 
-# 2. طلب إذن الوصول إلى التخزين
-# هذا ضروري ليتمكن Pegasus من قراءة ملفات الألعاب من ذاكرة هاتفك.
-echo "2/5: Requesting storage permission. Please follow the prompt."
+# التأكد من وجود termux-api لإذن التخزين
+if ! command -v termux-setup-storage &> /dev/null
+then
+    echo "⚠️ termux-api is required. Installing now..."
+    pkg install termux-api -y
+fi
+
+# 1. طلب إذن الوصول إلى التخزين (ضروري لقراءة ملفات الألعاب)
+echo "1/3: Requesting storage permission. Please follow the prompt on your screen."
 termux-setup-storage
 
-# 3. تحديد مجلد العمل وتحميل ملفات الميتا داتا
+# 2. تحديد مجلد العمل وتحميل ملفات الميتا داتا
 INSTALL_DIR="$HOME/pegasus-frontend-setup"
 METADATA_REPO="https://github.com/dragoonDorise/pegasus-android-metadata.git"
 PEGASUS_APK_URL="https://github.com/mmatyas/pegasus-frontend/releases/latest/download/pegasus-fe_latest_android.apk"
 APK_FILE="pegasus-fe.apk"
 
+# حذف المجلد القديم إذا كان موجوداً وإعادة الإنشاء
+rm -rf "$INSTALL_DIR"
 mkdir -p "$INSTALL_DIR"
 cd "$INSTALL_DIR"
 
-echo "3/5: Cloning Pegasus metadata files..."
+echo "2/3: Cloning Pegasus metadata files..."
 git clone "$METADATA_REPO"
 
-# 4. تحميل تطبيق Pegasus Frontend APK (أحدث إصدار)
-echo "4/5: Downloading the latest Pegasus Frontend APK..."
+# 3. تحميل تطبيق Pegasus Frontend APK (أحدث إصدار)
+echo "3/3: Downloading the latest Pegasus Frontend APK..."
 wget -q --show-progress "$PEGASUS_APK_URL" -O "$APK_FILE"
 
-# 5. إنهاء التثبيت وتقديم التعليمات
-echo "5/5: Installation files are ready."
+# 4. رسالة الإتمام والتعليمات
 echo -e "\n======================================================="
-echo "✅ SUCCESS: Installation files downloaded successfully!"
+echo "✅ SUCCESS: Pegasus Frontend files downloaded successfully!"
 echo "======================================================="
 echo "الخطوة التالية هي تثبيت التطبيق يدوياً."
 echo "لتثبيت تطبيق Pegasus Frontend، قم بتشغيل الأمر التالي في Termux:"
 echo -e "\n\txdg-open $INSTALL_DIR/$APK_FILE\n"
-echo "بعد التثبيت، قم بفتح تطبيق 'Pegasus Frontend' من قائمة تطبيقات هاتفك."
-echo -e "يمكنك إيجاد ملفات الإعدادات في: $INSTALL_DIR/pegasus-android-metadata"
-
-# ملاحظة: إذا كنت تقصد أداة الاختراق (Pegasus-Neo)، يمكنك استبدال
-# METADATA_REPO و PEGASUS_APK_URL برابط مستودع Pegasus-Neo.
+echo "بعد التثبيت، قم بفتح تطبيق 'Pegasus Frontend' من قائمة تطبيقات هاتفك وإعداده."
